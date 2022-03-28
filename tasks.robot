@@ -27,8 +27,9 @@ Order robots from RobotSpareBin Industries Inc
         Embed the robot screenshot to the receipt PDF file    ${screenshot}    ${pdf}
         Go to order another robot
     END
-    # Create a ZIP file of the receipts
-
+    Create a ZIP file of the receipts
+    Remove temporary files
+    
 *** Keywords ***
 Open the robot order website
 
@@ -65,6 +66,15 @@ Submit the order
             ${res}    Is element visible    id:order-another
             IF    ${res} == ${False}
                 Click Button    Order
+                ${res}    Is element visible    id:order-another
+                IF    ${res} == ${False}
+                Click Button    Order
+                ${res}    Is element visible    id:order-another
+                    IF    ${res} == ${False}
+                Click Button    Order
+                ${res}    Is element visible    id:order-another
+                    END
+                END
             END
         END
     END
@@ -102,13 +112,20 @@ Embed the robot screenshot to the receipt PDF file
 
 Create a ZIP file of the receipts
     Create File    ${CURDIR}${/}myfiles.zip
-    FOR    ${num}    IN RANGE    1    20    1
+    FOR    ${num}    IN RANGE    1    21    1
         ${file_name}=    Catenate    SEPARATOR=    ${num}    .pdf
         Add To Archive    ${CURDIR}${/}${file_name}    myfiles.zip
-        Create a ZIP file of the receipts
     END
 
 Input form Dialog
-    Add text input    website    label=Website query
+    Add text input    website    label=Insert https://robotsparebinindustries.com/
     ${response}=    Run dialog
     [Return]    ${response.website}
+
+Remove temporary files
+    FOR    ${num}    IN RANGE    1    21    1
+        ${pdf_name}=    Catenate    SEPARATOR=    ${num}    .pdf
+        ${png_name}=    Catenate    SEPARATOR=    ${num}    .png
+        Remove File    ${CURDIR}${/}${pdf_name}
+        Remove File    ${CURDIR}${/}${png_name}
+    END
