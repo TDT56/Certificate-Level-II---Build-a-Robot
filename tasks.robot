@@ -13,7 +13,7 @@ Library           RPA.Robocloud.Secrets
 Library           mykeywords.py
 
 *** Tasks ***
-Order robots from RobotSpareBin Industries Inc
+Order robots from RobotSpareBin Industries Inc    
     ${website} =    Input form Dialog
     Open the robot order website    ${website}
     ${orders}=    Get orders
@@ -34,7 +34,7 @@ Order robots from RobotSpareBin Industries Inc
 Open the robot order website
 
     [Arguments]    ${website}
-    Open Available Browser    ${website}    #https://robotsparebinindustries.com/
+    Open Available Browser    ${website}
     Click Link    Order your robot!
 
 Get orders
@@ -58,7 +58,7 @@ Submit the order
     [Arguments]    ${row}
     Click Button    Order
     ${res}    Is element visible    id:order-another
-    IF    ${res} == ${False}    # the while function does not seem to be wokring, thus 3 ifs are used
+    IF    ${res} == ${False}    # ALL THE IFS IS BECAUSE THE WHILE FUNCTION DIDN'T WANT TO WORK
         Click Button    Order
         ${res}    Is element visible    id:order-another
         IF    ${res} == ${False}
@@ -111,14 +111,10 @@ Embed the robot screenshot to the receipt PDF file
     Add Files To PDF    ${files}    ${pdf}
 
 Create a ZIP file of the receipts
-    Create File    ${CURDIR}${/}myfiles.zip
-    FOR    ${num}    IN RANGE    1    21    1
-        ${file_name}=    Catenate    SEPARATOR=    ${num}    .pdf
-        Add To Archive    ${CURDIR}${/}${file_name}    myfiles.zip
-    END
+    Archive Folder With Zip    ${CURDIR}    ${CURDIR}${/}myfiles.zip    recursive=false    include=*.pdf
 
 Input form Dialog
-    Add text input    website    label=Insert https://robotsparebinindustries.com/
+    Add text input    website    label=Insert the original website: https://robotsparebinindustries.com/
     ${response}=    Run dialog
     [Return]    ${response.website}
 
